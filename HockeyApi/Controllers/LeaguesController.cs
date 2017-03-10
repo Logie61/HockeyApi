@@ -46,8 +46,9 @@ namespace HockeyApi.Controllers
             }
 
             _context.Leagues.Update(model);
+            _context.SaveChanges();
 
-            return CreatedAtAction("League", new { id = model.Id }, model);
+            return RedirectToAction("League", "Leagues", new { id = model.Id });
         }
 
         [HttpGet("{id}")]
