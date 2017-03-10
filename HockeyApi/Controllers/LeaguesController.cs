@@ -20,15 +20,8 @@ namespace HockeyApi.Controllers
         [HttpGet]
         public IActionResult Leagues()
         {
-            try
-            {
-                var leagues = _context.Leagues.Include(l => l.Teams).ToList();
-                return base.Ok(leagues);
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var leagues = _context.Leagues.Include(l => l.Teams).ToList();
+            return Ok(leagues);
         }
 
         [HttpPost]
@@ -61,7 +54,7 @@ namespace HockeyApi.Controllers
         public IActionResult League(Guid id)
         {
             var league = _context.Leagues.Include(l => l.Teams).SingleOrDefault(l => l.Id == id);
-            
+
             return Ok(league);
         }
 
@@ -76,8 +69,13 @@ namespace HockeyApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
+            if(id == default(Guid))
+            {
+                return BadRequest("Invalid id provided");
+            }
+
             var league = _context.Leagues.SingleOrDefault(l => l.Id == id);
-            if(league == null)
+            if (league == null)
             {
                 return BadRequest($"No league with id {id}");
             }
@@ -85,8 +83,7 @@ namespace HockeyApi.Controllers
             _context.Leagues.Remove(league);
             _context.SaveChanges();
 
-
-            return NoContent();
+            return Ok();
         }
     }
 }
